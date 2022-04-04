@@ -1,2 +1,2 @@
-# dslr - Datascience X Logistic Regression
+# DSLR - Datascience X Logistic Regression
 Logistic regression
