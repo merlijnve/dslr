@@ -1,5 +1,4 @@
-# DSLR - Datascience X Logistic Regression
-## Building datascience tools & implementing logistic regression
+# DSLR - Building Datascience tools & implementing Logistic Regression
 
 ## Data Analysis
 ### ./describe [csv file]
