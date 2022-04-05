@@ -56,7 +56,5 @@ func readDataset() [][]string {
 func main() {
 	dataset := readDataset()
 	numericalFeatures := identifyNumericalFeatures(dataset)
-	// Strip index
-	numericalFeatures = numericalFeatures[1:]
 	displayInformation(dataset, numericalFeatures)
 }
