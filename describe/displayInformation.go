@@ -100,17 +100,16 @@ func formatPercentiles(floatData [][]float64, numericalFeatures []int, flag stri
 		rank := 0.0
 		switch flag {
 		case "25":
-			rank = (float64(len(floatData[i])) + 1) / 4 - 1
+			rank = (float64(len(floatData[i]))+1)/4 - 1
 		case "50":
-			rank = (float64(len(floatData[i])) + 1) / 2 - 1
+			rank = (float64(len(floatData[i]))+1)/2 - 1
 		case "75":
-			rank = (float64(len(floatData[i])) + 1) / 4 * 3 - 1
+			rank = (float64(len(floatData[i]))+1)/4*3 - 1
 		}
 		// check if value has fractional part or is integer
 		if rank == float64(int(rank)) {
 			result += strconv.FormatFloat(floatData[i][int(rank)], 'f', 6, 64) + "\t"
 		} else {
-			fmt.Println(int(rank), rank-float64(int(rank)))
 			result += strconv.FormatFloat(floatData[i][int(rank)]+(rank-float64(int(rank)))*(floatData[i][int(rank)+1]-floatData[i][int(rank)]), 'f', 6, 64) + "\t"
 		}
 	}
