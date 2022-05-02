@@ -1,29 +1,114 @@
 package main
 
 import (
+	"fmt"
 	"image/color"
+	"image/png"
+	"os"
+	"sort"
+	"strconv"
 
+	gim "github.com/ozankasikci/go-image-merge"
 	"gonum.org/v1/plot"
 	"gonum.org/v1/plot/plotter"
 )
 
-func create_histogram(featureName string, houses []string, data []float64) {
-	var values plotter.Values
+const HUFFLEPUFF = 0
+const RAVENCLAW = 1
+const GRYFFINDOR = 2
+const SLYTHERIN = 3
 
-	for i := range data {
-		values = append(values, data[i])
-	}
+var houseNames = [...]string{"Hufflepuff", "Ravenclaw", "Gryffindor", "Slytherin"}
+
+func createHouseHist(house string, featureName string, values plotter.Values, featureMin float64, featureMax float64) {
 	p := plot.New()
-	p.Title.Text = featureName + " Distribution"
-	// p.X.Label.Text = dataset.xName
-	// p.Y.Label.Text = dataset.yName
-	hist, err := plotter.NewHist(values, 20)
-	hist.FillColor = color.RGBA{R: 39,G:159, B: 245, A: 255}
-    if err != nil {
-        handleError(err, "Error: could not make histogram")
-    }
-    p.Add(hist)
+	p.Title.Text = featureName + ": " + house + " Distribution"
 
-	err = p.Save(600, 600, "tmp/"+featureName + "_distribution.png")
+	p.X.Max = featureMax
+	p.X.Min = featureMin
+
+	p.X.Label.Text = "Value"
+	p.Y.Label.Text = "Frequency"
+	hist, err := plotter.NewHist(values, 20)
 	handleError(err, "Error: could not make histogram")
+	hist.FillColor = color.RGBA{R: 39, G: 159, B: 245, A: 255}
+	p.Add(hist)
+
+	err = p.Save(600, 600, "tmp/"+featureName+"_"+house+"_distribution.png")
+	handleError(err, "Error: could not make histogram")
+}
+
+func combineHouseImages(featureName string) {
+	grids := []*gim.Grid{
+		{ImageFilePath: "tmp/" + featureName + "_Hufflepuff_distribution.png"},
+		{ImageFilePath: "tmp/" + featureName + "_Ravenclaw_distribution.png"},
+		{ImageFilePath: "tmp/" + featureName + "_Gryffindor_distribution.png"},
+		{ImageFilePath: "tmp/" + featureName + "_Slytherin_distribution.png"},
+	}
+
+	fmt.Println(grids)
+
+	rgba, err := gim.New(grids, 1, 4).Merge()
+	handleError(err, "Error: gim could not merge house images")
+
+	file, err := os.Create("tmp/" + featureName + ".png")
+	err = png.Encode(file, rgba)
+	handleError(err, "Error: gim could not save merged images")
+
+	os.Remove("tmp/" + featureName + "_Hufflepuff_distribution.png")
+	os.Remove("tmp/" + featureName + "_Ravenclaw_distribution.png")
+	os.Remove("tmp/" + featureName + "_Gryffindor_distribution.png")
+	os.Remove("tmp/" + featureName + "_Slytherin_distribution.png")
+
+}
+
+func combineFeatureImages(dataset [][]string, numericalFeatures []int) {
+	grids := make([]*gim.Grid, 0)
+	for _, i := range numericalFeatures {
+		g := gim.Grid{ImageFilePath: "tmp/" + dataset[0][i] + ".png"}
+		grids = append(grids, &g)
+	}
+
+	fmt.Println(grids)
+	rgba, err := gim.New(grids, len(grids), 1).Merge()
+	handleError(err, "Error: gim could not merge feature images")
+
+	file, err := os.Create("histogram.png")
+	err = png.Encode(file, rgba)
+	handleError(err, "Error: gim could save merged images")
+
+	os.RemoveAll("tmp/")
+
+}
+
+func createHistogram(featureName string, featureIndex int, dataset [][]string) {
+	allValues := make([]float64, 0)
+	houseValues := make([]plotter.Values, 4)
+	index := 0
+
+	data := dataset[1:]
+	for i := range data {
+		switch data[i][1] {
+		case "Ravenclaw":
+			index = RAVENCLAW
+		case "Slytherin":
+			index = SLYTHERIN
+		case "Hufflepuff":
+			index = HUFFLEPUFF
+		case "Gryffindor":
+			index = GRYFFINDOR
+		}
+		if data[i][featureIndex] != "" {
+			val, err := strconv.ParseFloat(data[i][featureIndex], 64)
+			handleError(err, "Could not parse \""+data[i][featureIndex]+"\" to float")
+			houseValues[index] = append(houseValues[index], val)
+			allValues = append(allValues, val)
+		}
+	}
+
+	sort.Float64s(allValues)
+	for i := range houseValues {
+		createHouseHist(houseNames[i], featureName, houseValues[i], allValues[0], allValues[len(allValues)-1])
+	}
+	combineHouseImages(featureName)
 }

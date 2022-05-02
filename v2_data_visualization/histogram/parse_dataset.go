@@ -4,29 +4,8 @@ import (
 	"encoding/csv"
 	"fmt"
 	"os"
-	"sort"
 	"strconv"
 )
-
-func parseFloatData(dataset [][]string, numericalFeatures []int) [][]float64 {
-	floatData := make([][]float64, len(dataset[0]))
-
-	for _, i := range numericalFeatures {
-		var count float64 = 0
-		for j := range dataset {
-			if dataset[j][i] != "" {
-				count++
-				val, err := strconv.ParseFloat(dataset[j][i], 64)
-				if err != nil {
-					handleError(err, "Could not parse \""+dataset[j][i]+"\" to float")
-				}
-				floatData[i] = append(floatData[i], val)
-			}
-		}
-		sort.Float64s(floatData[i])
-	}
-	return floatData
-}
 
 func identifyNumericalFeatures(dataset [][]string) []int {
 	numericalFeatures := make([]int, 0)
