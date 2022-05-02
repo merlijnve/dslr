@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"image/color"
 	"image/png"
 	"os"
@@ -31,7 +30,17 @@ func createHouseHist(house string, featureName string, values plotter.Values, fe
 	p.Y.Label.Text = "Frequency"
 	hist, err := plotter.NewHist(values, 20)
 	handleError(err, "Error: could not make histogram")
-	hist.FillColor = color.RGBA{R: 39, G: 159, B: 245, A: 255}
+	switch house {
+	case "Hufflepuff":
+		hist.FillColor = color.RGBA{R: 127, G: 177, B: 239, A: 255}
+	case "Ravenclaw":
+		hist.FillColor = color.RGBA{R: 241, G: 202, B: 252, A: 255}
+	case "Gryffindor":
+		hist.FillColor = color.RGBA{R: 193, G: 255, B: 162, A: 255}
+	case "Slytherin":
+		hist.FillColor = color.RGBA{R: 255, G: 255, B: 112, A: 255}
+	}
+
 	p.Add(hist)
 
 	err = p.Save(600, 600, "tmp/"+featureName+"_"+house+"_distribution.png")
@@ -45,8 +54,6 @@ func combineHouseImages(featureName string) {
 		{ImageFilePath: "tmp/" + featureName + "_Gryffindor_distribution.png"},
 		{ImageFilePath: "tmp/" + featureName + "_Slytherin_distribution.png"},
 	}
-
-	fmt.Println(grids)
 
 	rgba, err := gim.New(grids, 1, 4).Merge()
 	handleError(err, "Error: gim could not merge house images")
@@ -69,7 +76,6 @@ func combineFeatureImages(dataset [][]string, numericalFeatures []int) {
 		grids = append(grids, &g)
 	}
 
-	fmt.Println(grids)
 	rgba, err := gim.New(grids, len(grids), 1).Merge()
 	handleError(err, "Error: gim could not merge feature images")
 
