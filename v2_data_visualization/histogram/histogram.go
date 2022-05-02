@@ -21,8 +21,8 @@ func main() {
 		houses = append(houses, dataset[i][1])
 	}
 
-	os.Mkdir("tmp", 0755)
-	// create_histogram(dataset[0][7], 7, dataset)
+	err := os.Mkdir("tmp", 0755)
+	handleError(err, "Error: could not create folder tmp")
 	for _, i := range numericalFeatures {
 		createHistogram(dataset[0][i], i, dataset)
 	}
