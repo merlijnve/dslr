@@ -35,7 +35,6 @@ func combineFeatureImages(dataset [][]string, numericalFeatures []int) {
 	handleError(err, "Error: gim could save merged images")
 
 	os.RemoveAll("tmp/")
-
 }
 
 func createHistogram(featureName string, featureIndex int, dataset [][]string) {
@@ -90,8 +89,4 @@ func createHistogram(featureName string, featureIndex int, dataset [][]string) {
 
 	dumper.Plot(&hist)
 	hist.Reset()
-	// for i := range houseValues {
-	// 	createHouseHist(houseNames[i], featureName, houseValues[i], allValues[0], allValues[len(allValues)-1])
-	// }
-	// combineHouseImages(featureName)
 }

@@ -20,7 +20,7 @@ func identifyNumericalFeatures(dataset [][]string) []int {
 				}
 			}
 		}
-		if numerical == true {
+		if numerical {
 			numericalFeatures = append(numericalFeatures, i)
 		}
 	}
@@ -33,7 +33,7 @@ func readDataset() [][]string {
 
 	if len(os.Args) > 1 {
 		file, err = os.Open(os.Args[1])
-		handleError(err, "Error: could not read file \""+os.Args[1]+"\"")
+		handleError(err, "Error: could not open file \""+os.Args[1]+"\"")
 		defer file.Close()
 	} else {
 		fmt.Println("Use ./histogram [dataset filename]")
@@ -42,6 +42,6 @@ func readDataset() [][]string {
 
 	csv := csv.NewReader(file)
 	records, err := csv.ReadAll()
-
+	handleError(err, "Error: could not parse csv")
 	return records
 }
