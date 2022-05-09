@@ -84,41 +84,6 @@ func plotScatter(dataset [][]string, numericalFeatures []int) {
 	os.RemoveAll("tmp/")
 }
 
-// func plotScatter(dataset [][]string, numericalFeatures []int) {
-// 	grids := make([]*gim.Grid, 0)
-// 	err := os.MkdirAll("tmp", 0755)
-// 	handleError(err, "Error: could not create directory")
-
-// 	for i := 1; i < len(numericalFeatures)-1; i++ {
-// 		for j := i + 1; j < len(numericalFeatures); j++ {
-// 			featureI := dataset[0][numericalFeatures[i]]
-// 			featureJ := dataset[0][numericalFeatures[j]]
-
-// 			p := plot.New()
-// 			p.Title.Text = featureI + " - " + featureJ + " Scatter"
-// 			p.X.Label.Text = featureI
-// 			p.Y.Label.Text = featureJ
-// 			xys := indexesToXYs(dataset, numericalFeatures[i], numericalFeatures[j])
-// 			s, err := plotter.NewScatter(xys)
-// 			handleError(err, "Error: could not add points of data")
-// 			p.Add(s)
-// 			err = p.Save(600, 600, "tmp/"+featureI+"-"+featureJ+".jpg")
-// 			handleError(err, "Error: could not save plot of linear equation")
-// 			g := gim.Grid{ImageFilePath: "tmp/" + featureI + "-" + featureJ + ".jpg"}
-// 			grids = append(grids, &g)
-// 		}
-// 	}
-// 	// create merged image
-// 	rgba, err := gim.New(grids, len(numericalFeatures) - 2, (len(numericalFeatures) - 1) / 2).Merge()
-// 	handleError(err, "Error: gim could not merge feature images")
-
-// 	file, err := os.Create("scatter.jpg")
-// 	err = jpeg.Encode(file, rgba, nil)
-// 	handleError(err, "Error: gim could save merged images")
-
-// 	os.RemoveAll("tmp/")
-// }
-
 func main() {
 	dataset := readDataset()
 	numericalFeatures := identifyNumericalFeatures(dataset)
