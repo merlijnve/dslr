@@ -13,7 +13,9 @@ require (
 	github.com/go-latex/latex v0.0.0-20210823091927-c0d11ff05a81 // indirect
 	github.com/go-pdf/fpdf v0.6.0 // indirect
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0 // indirect
+	github.com/llgcode/draw2d v0.0.0-20180825133448-f52c8a71aff0 // indirect
 	github.com/ozankasikci/go-image-merge v0.2.2 // indirect
+	github.com/vdobler/chart v1.0.0 // indirect
 	golang.org/x/image v0.0.0-20220302094943-723b81ca9867 // indirect
 	golang.org/x/text v0.3.7 // indirect
 )

@@ -8,7 +8,7 @@ import (
 	"strconv"
 
 	gim "github.com/ozankasikci/go-image-merge"
-	"gonum.org/v1/plot"
+	"github.com/vdobler/chart"
 	"gonum.org/v1/plot/plotter"
 )
 
@@ -19,56 +19,6 @@ const SLYTHERIN = 3
 
 var houseNames = [...]string{"Hufflepuff", "Ravenclaw", "Gryffindor", "Slytherin"}
 
-func createHouseHist(house string, featureName string, values plotter.Values, featureMin float64, featureMax float64) {
-	p := plot.New()
-	p.Title.Text = featureName + ": " + house + " Distribution"
-
-	p.X.Max = featureMax
-	p.X.Min = featureMin
-
-	p.X.Label.Text = "Value"
-	p.Y.Label.Text = "Frequency"
-	hist, err := plotter.NewHist(values, 20)
-	handleError(err, "Error: could not make histogram")
-	switch house {
-	case "Hufflepuff":
-		hist.FillColor = color.RGBA{R: 127, G: 177, B: 239, A: 255}
-	case "Ravenclaw":
-		hist.FillColor = color.RGBA{R: 241, G: 202, B: 252, A: 255}
-	case "Gryffindor":
-		hist.FillColor = color.RGBA{R: 193, G: 255, B: 162, A: 255}
-	case "Slytherin":
-		hist.FillColor = color.RGBA{R: 255, G: 255, B: 112, A: 255}
-	}
-
-	p.Add(hist)
-
-	err = p.Save(600, 600, "tmp/"+featureName+"_"+house+"_distribution.png")
-	handleError(err, "Error: could not make histogram")
-}
-
-func combineHouseImages(featureName string) {
-	grids := []*gim.Grid{
-		{ImageFilePath: "tmp/" + featureName + "_Hufflepuff_distribution.png"},
-		{ImageFilePath: "tmp/" + featureName + "_Ravenclaw_distribution.png"},
-		{ImageFilePath: "tmp/" + featureName + "_Gryffindor_distribution.png"},
-		{ImageFilePath: "tmp/" + featureName + "_Slytherin_distribution.png"},
-	}
-
-	rgba, err := gim.New(grids, 1, 4).Merge()
-	handleError(err, "Error: gim could not merge house images")
-
-	file, err := os.Create("tmp/" + featureName + ".png")
-	err = png.Encode(file, rgba)
-	handleError(err, "Error: gim could not save merged images")
-
-	os.Remove("tmp/" + featureName + "_Hufflepuff_distribution.png")
-	os.Remove("tmp/" + featureName + "_Ravenclaw_distribution.png")
-	os.Remove("tmp/" + featureName + "_Gryffindor_distribution.png")
-	os.Remove("tmp/" + featureName + "_Slytherin_distribution.png")
-
-}
-
 func combineFeatureImages(dataset [][]string, numericalFeatures []int) {
 	grids := make([]*gim.Grid, 0)
 	for _, i := range numericalFeatures {
@@ -76,10 +26,11 @@ func combineFeatureImages(dataset [][]string, numericalFeatures []int) {
 		grids = append(grids, &g)
 	}
 
-	rgba, err := gim.New(grids, len(grids), 1).Merge()
+	rgba, err := gim.New(grids, len(grids)/3, 4).Merge()
 	handleError(err, "Error: gim could not merge feature images")
 
-	file, err := os.Create("histogram.png")
+	file, err := os.Create("stackedHistogram.png")
+	handleError(err, "Error: could not create stackedHistogram.png")
 	err = png.Encode(file, rgba)
 	handleError(err, "Error: gim could save merged images")
 
@@ -95,14 +46,14 @@ func createHistogram(featureName string, featureIndex int, dataset [][]string) {
 	data := dataset[1:]
 	for i := range data {
 		switch data[i][1] {
-		case "Ravenclaw":
-			index = RAVENCLAW
-		case "Slytherin":
-			index = SLYTHERIN
 		case "Hufflepuff":
 			index = HUFFLEPUFF
+		case "Ravenclaw":
+			index = RAVENCLAW
 		case "Gryffindor":
 			index = GRYFFINDOR
+		case "Slytherin":
+			index = SLYTHERIN
 		}
 		if data[i][featureIndex] != "" {
 			val, err := strconv.ParseFloat(data[i][featureIndex], 64)
@@ -113,8 +64,34 @@ func createHistogram(featureName string, featureIndex int, dataset [][]string) {
 	}
 
 	sort.Float64s(allValues)
-	for i := range houseValues {
-		createHouseHist(houseNames[i], featureName, houseValues[i], allValues[0], allValues[len(allValues)-1])
-	}
-	combineHouseImages(featureName)
+
+	hist := chart.HistChart{Title: featureName, Stacked: true, Counts: false}
+	hist.XRange.Label = "Sample Value"
+	hist.YRange.Label = "Rel. Frequency [%]"
+
+	points := houseValues[0]
+	hist.AddData("HUFFLEPUFF", points,
+		chart.Style{LineColor: color.NRGBA{0xff, 0x00, 0x00, 0xff}, LineWidth: 1, FillColor: color.NRGBA{0xff, 0x80, 0x80, 0xff}})
+
+	points2 := houseValues[1]
+	hist.AddData("RAVENCLAW", points2,
+		chart.Style{LineColor: color.NRGBA{0x00, 0xff, 0x00, 0xff}, LineWidth: 1, FillColor: color.NRGBA{0x80, 0xff, 0x80, 0xff}})
+
+	points3 := houseValues[2]
+	hist.AddData("GRYFFINDOR", points3,
+		chart.Style{LineColor: color.NRGBA{0x00, 0x00, 0xff, 0xff}, LineWidth: 1, FillColor: color.NRGBA{0x80, 0x80, 0xff, 0xff}})
+
+	points4 := houseValues[3]
+	hist.AddData("SLYTHERIN", points4,
+		chart.Style{LineColor: color.NRGBA{0x00, 0xff, 0xff, 0x00}, LineWidth: 1, FillColor: color.NRGBA{0x80, 0xff, 0xff, 0x80}})
+
+	dumper := NewDumper("tmp/"+featureName, 1, 1, 1000, 1000)
+	defer dumper.Close()
+
+	dumper.Plot(&hist)
+	hist.Reset()
+	// for i := range houseValues {
+	// 	createHouseHist(houseNames[i], featureName, houseValues[i], allValues[0], allValues[len(allValues)-1])
+	// }
+	// combineHouseImages(featureName)
 }
