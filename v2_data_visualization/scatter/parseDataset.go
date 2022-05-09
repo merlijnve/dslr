@@ -20,7 +20,7 @@ func identifyNumericalFeatures(dataset [][]string) []int {
 				}
 			}
 		}
-		if numerical == true {
+		if numerical {
 			numericalFeatures = append(numericalFeatures, i)
 		}
 	}
@@ -42,6 +42,6 @@ func readDataset() [][]string {
 
 	csv := csv.NewReader(file)
 	records, err := csv.ReadAll()
-
+	handleError(err, "Error: could not read csv")
 	return records
 }
