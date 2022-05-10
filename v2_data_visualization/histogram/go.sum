@@ -30,6 +30,7 @@ github.com/jung-kurt/gofpdf v1.0.0/go.mod h1:7Id9E/uU8ce6rXgefFLlgrJj/GYY22cpxn+
 github.com/kisielk/gotool v1.0.0/go.mod h1:XhKaO+MFFWcvkIS/tQcRk01m1F5IRFswLeQ+oQHNcck=
 github.com/llgcode/draw2d v0.0.0-20180825133448-f52c8a71aff0 h1:2vp6ESimuT8pCuZHThVyV0hlfa9oPL06HnGCL9pbUgc=
 github.com/llgcode/draw2d v0.0.0-20180825133448-f52c8a71aff0/go.mod h1:mVa0dA29Db2S4LVqDYLlsePDzRJLDfdhVZiI15uY0FA=
+github.com/llgcode/ps v0.0.0-20150911083025-f1443b32eedb h1:61ndUreYSlWFeCY44JxDDkngVoI7/1MVhEl98Nm0KOk=
 github.com/llgcode/ps v0.0.0-20150911083025-f1443b32eedb/go.mod h1:1l8ky+Ew27CMX29uG+a2hNOKpeNYEQjjtiALiBlFQbY=
 github.com/ozankasikci/go-image-merge v0.2.2 h1:K370BLLTIsamwjAeViiPntf7GiG3h9pXzDmxXCbN8/0=
 github.com/ozankasikci/go-image-merge v0.2.2/go.mod h1:NQ2aN0b21buFx3p+5x4dZrKuPSLh2uBukK7F30BrYTo=
