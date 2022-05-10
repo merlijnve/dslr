@@ -4,7 +4,7 @@ import (
 	"image"
 	"image/color"
 	"image/draw"
-	"image/png"
+	"image/jpeg"
 	"os"
 
 	svg "github.com/ajstarks/svgo"
@@ -23,7 +23,7 @@ func NewDumper(name string, n, m, w, h int) *Dumper {
 	var err error
 	dumper := Dumper{N: n, M: m, W: w, H: h}
 
-	dumper.imgFile, err = os.Create(name + ".png")
+	dumper.imgFile, err = os.Create(name + ".jpeg")
 	if err != nil {
 		panic(err)
 	}
@@ -34,7 +34,7 @@ func NewDumper(name string, n, m, w, h int) *Dumper {
 	return &dumper
 }
 func (d *Dumper) Close() {
-	png.Encode(d.imgFile, d.I)
+	jpeg.Encode(d.imgFile, d.I, nil)
 	d.imgFile.Close()
 }
 

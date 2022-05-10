@@ -53,7 +53,7 @@ func plotScatter(dataset [][]string, numericalFeatures []int) {
 	err := os.MkdirAll("tmp", 0755)
 	handleError(err, "Error: could not create directory")
 
-	for i := 1; i < len(numericalFeatures)-1; i++ {
+	for i := 0; i < len(numericalFeatures)-1; i++ {
 		for j := i + 1; j < len(numericalFeatures); j++ {
 			featureI := dataset[0][numericalFeatures[i]]
 			featureJ := dataset[0][numericalFeatures[j]]
@@ -68,15 +68,15 @@ func plotScatter(dataset [][]string, numericalFeatures []int) {
 			dumper.Plot(&s)
 			dumper.Close()
 
-			g := gim.Grid{ImageFilePath: "tmp/" + featureI + "-" + featureJ + ".png"}
+			g := gim.Grid{ImageFilePath: "tmp/" + featureI + "-" + featureJ + ".jpeg"}
 			grids = append(grids, &g)
 		}
 	}
 	// create merged image
-	rgba, err := gim.New(grids, len(numericalFeatures)-2, (len(numericalFeatures)-1)/2).Merge()
-	handleError(err, "Error: gim could not merge feature images")
+	rgba, err := gim.New(grids, len(numericalFeatures)-1, (len(numericalFeatures))/2).Merge()
+	handleError(err, "Error: gim could not merge feature images (did you run out of space?)")
 
-	file, err := os.Create("scatter.png")
+	file, err := os.Create("scatter.jpeg")
 	handleError(err, "Error: could not create scatter")
 	err = jpeg.Encode(file, rgba, nil)
 	handleError(err, "Error: gim could save merged images")
