@@ -36,7 +36,7 @@ func readDataset() [][]string {
 		handleError(err, "Error: could not open file \""+os.Args[1]+"\"")
 		defer file.Close()
 	} else {
-		fmt.Println("Use ./histogram [dataset filename]")
+		fmt.Println("Use ./pair [dataset filename]")
 		os.Exit(0)
 	}
 
