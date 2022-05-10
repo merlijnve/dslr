@@ -2,7 +2,7 @@ package main
 
 import (
 	"image/color"
-	"image/png"
+	"image/jpeg"
 	"os"
 	"sort"
 	"strconv"
@@ -22,16 +22,16 @@ var houseNames = [...]string{"Hufflepuff", "Ravenclaw", "Gryffindor", "Slytherin
 func combineFeatureImages(dataset [][]string, numericalFeatures []int) {
 	grids := make([]*gim.Grid, 0)
 	for _, i := range numericalFeatures {
-		g := gim.Grid{ImageFilePath: "tmp/" + dataset[0][i] + ".png"}
+		g := gim.Grid{ImageFilePath: "tmp/" + dataset[0][i] + ".jpeg"}
 		grids = append(grids, &g)
 	}
 
 	rgba, err := gim.New(grids, len(grids)/3, 4).Merge()
 	handleError(err, "Error: gim could not merge feature images")
 
-	file, err := os.Create("stackedHistogram.png")
-	handleError(err, "Error: could not create stackedHistogram.png")
-	err = png.Encode(file, rgba)
+	file, err := os.Create("stackedHistogram.jpeg")
+	handleError(err, "Error: could not create stackedHistogram.jpeg")
+	err = jpeg.Encode(file, rgba, nil)
 	handleError(err, "Error: gim could save merged images")
 
 	os.RemoveAll("tmp/")
