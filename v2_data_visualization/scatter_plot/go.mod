@@ -1,4 +1,4 @@
-module scatter
+module scatter_plot
 
 go 1.18
 
