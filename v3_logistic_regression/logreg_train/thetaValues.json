@@ -1,0 +1,30 @@
+[
+ {
+  "House": "Hufflepuff",
+  "Feature0": "Flying",
+  "Feature1": "Herbology",
+  "T0": 0,
+  "T1": 0
+ },
+ {
+  "House": "Gryffindor",
+  "Feature0": "Muggle Studies",
+  "Feature1": "Arithmancy",
+  "T0": 0,
+  "T1": 0
+ },
+ {
+  "House": "Slytherin",
+  "Feature0": "History of Magic",
+  "Feature1": "Transfiguration",
+  "T0": 0,
+  "T1": 0
+ },
+ {
+  "House": "Ravenclaw",
+  "Feature0": "Care of Magical Creatures",
+  "Feature1": "Charms",
+  "T0": 0,
+  "T1": 0
+ }
+]
