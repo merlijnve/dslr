@@ -4,10 +4,13 @@ import (
 	"math"
 )
 
-// three theta's for a circle
-// z = θ0 + θ1 * (x1)^2 + θ2 * (x2)^2
+// hypothesis function
+// h = θ0 + θ1 * x1 + θ2 * x2
+func h(c Classifier, x1 float64, x2 float64) float64 {
+	return c.T0 + c.T1*x1 + c.T2*x2
+}
 
-// linear equation for estimating price
+// sigmoid function
 func sigmoid(z float64) float64 {
 	return 1 / (1 + math.Exp(-z))
 }
@@ -41,10 +44,6 @@ func sigmoid(z float64) float64 {
 
 // 	return theta0, theta1
 // }
-
-func cost(x float64, y float64, theta float64) {
-
-}
 
 func gradientDescent(dataset [][]float64) (float64, float64) {
 	var theta0, theta1 float64 = 0, 0

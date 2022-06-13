@@ -12,12 +12,14 @@ const GRYFFINDOR = 1
 const SLYTHERIN = 2
 const RAVENCLAW = 3
 
-type Thetas struct {
+type Classifier struct {
 	House    string
 	Feature0 string
 	Feature1 string
+	data     [][]float64
 	T0       float64
 	T1       float64
+	T2       float64
 }
 
 func handleError(err error, msg string) {
@@ -27,7 +29,7 @@ func handleError(err error, msg string) {
 	}
 }
 
-func writeThetas(thetas []Thetas) {
+func writeThetas(thetas []Classifier) {
 	file, err := json.MarshalIndent(thetas, "", " ")
 	handleError(err, "Error: could not create indent the theta values to json")
 
@@ -35,25 +37,25 @@ func writeThetas(thetas []Thetas) {
 	handleError(err, "Error: could not create theta values file")
 }
 
-func initThetaHouseAndFeatures() []Thetas {
-	thetas := make([]Thetas, 0)
+func initThetaHouseAndFeatures() []Classifier {
+	thetas := make([]Classifier, 0)
 
-	thetas = append(thetas, Thetas{House: "Hufflepuff", Feature0: "Flying", Feature1: "Herbology"})
-	thetas = append(thetas, Thetas{House: "Gryffindor", Feature0: "Muggle Studies", Feature1: "Arithmancy"})
-	thetas = append(thetas, Thetas{House: "Slytherin", Feature0: "History of Magic", Feature1: "Transfiguration"})
-	thetas = append(thetas, Thetas{House: "Ravenclaw", Feature0: "Care of Magical Creatures", Feature1: "Charms"})
+	thetas = append(thetas, Classifier{House: "Hufflepuff", Feature0: "Flying", Feature1: "Herbology"})
+	thetas = append(thetas, Classifier{House: "Gryffindor", Feature0: "Muggle Studies", Feature1: "Arithmancy"})
+	thetas = append(thetas, Classifier{House: "Slytherin", Feature0: "History of Magic", Feature1: "Transfiguration"})
+	thetas = append(thetas, Classifier{House: "Ravenclaw", Feature0: "Care of Magical Creatures", Feature1: "Charms"})
 
 	return thetas
 }
 
 func main() {
 	dataset := readDataset()
-	thetas := initThetaHouseAndFeatures()
+	classifiers := initThetaHouseAndFeatures()
 
-	for _, t := range thetas {
-		fmt.Println("Making classifier for", t.House, "using:\n", t.Feature0, "vs", t.Feature1)
-		data := getDataPair(dataset, t)
-		fmt.Println(data)
+	for i := range classifiers {
+		c := &classifiers[i]
+		fmt.Println("Making classifier for", c.House, "using:\n", c.Feature0, "vs", c.Feature1)
+		c.data = getDataPair(dataset, *c)
 	}
-	writeThetas(thetas)
+	writeThetas(classifiers)
 }

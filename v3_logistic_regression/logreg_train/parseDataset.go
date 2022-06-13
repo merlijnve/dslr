@@ -16,7 +16,7 @@ func findIndexOfFeature(dataset [][]string, feature string) int {
 	return -1
 }
 
-func getDataPair(dataset [][]string, t Thetas) [][]float64 {
+func getDataPair(dataset [][]string, t Classifier) [][]float64 {
 	dataPair := make([][]float64, 0)
 	i0 := findIndexOfFeature(dataset, t.Feature0)
 	i1 := findIndexOfFeature(dataset, t.Feature1)
