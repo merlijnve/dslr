@@ -16,11 +16,22 @@ func findIndexOfFeature(dataset [][]string, feature string) int {
 	return -1
 }
 
-func getDataPair(dataset [][]string, t Classifier) [][]float64 {
+func countClass(c Classifier) {
+	amount := 0
+
+	for i := range c.data {
+		if c.data[i][2] == 1.0 {
+			amount += 1
+		}
+	}
+	fmt.Println(amount, "/", len(c.data), "is", c.House)
+}
+
+func getDataPair(dataset [][]string, c Classifier) [][]float64 {
 	dataPair := make([][]float64, 0)
-	i0 := findIndexOfFeature(dataset, t.Feature0)
-	i1 := findIndexOfFeature(dataset, t.Feature1)
-	isClass := 0
+	i0 := findIndexOfFeature(dataset, c.Feature0)
+	i1 := findIndexOfFeature(dataset, c.Feature1)
+	isClass := 0.0
 
 	for i := range dataset {
 		if i != 0 && dataset[i][i0] != "" && dataset[i][i1] != "" {
@@ -30,11 +41,12 @@ func getDataPair(dataset [][]string, t Classifier) [][]float64 {
 			val1, err2 := strconv.ParseFloat(dataset[i][i1], 64)
 			handleError(err2, "Error: could not parse "+dataset[i][i1])
 
-			if dataset[i][1] == t.House {
-				isClass = 1
+			if dataset[i][1] == c.House {
+				isClass = 1.0
+			} else {
+				isClass = 0.0
 			}
-
-			dataPair = append(dataPair, []float64{val0, val1, float64(isClass)})
+			dataPair = append(dataPair, []float64{val0, val1, isClass})
 		}
 	}
 	return dataPair

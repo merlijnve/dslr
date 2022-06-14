@@ -1,71 +1,82 @@
 package main
 
 import (
+	"fmt"
 	"math"
 )
-
-// hypothesis function
-// h = θ0 + θ1 * x1 + θ2 * x2
-func h(c Classifier, x1 float64, x2 float64) float64 {
-	return c.T0 + c.T1*x1 + c.T2*x2
-}
 
 // sigmoid function
 func sigmoid(z float64) float64 {
 	return 1 / (1 + math.Exp(-z))
 }
 
-// func normalizeDataset(dataset Dataset) Dataset {
-// 	var normalizedDataset Dataset
+// hypothesis function
+// h = θ0 + θ1 * x1 + θ2 * x2
+func h(c Classifier, x1 float64, x2 float64) float64 {
+	return c.t0 + c.t1*x1 + c.t2*x2
+}
 
-// 	// create a copy of the dataset
-// 	normalizedDataset.xName = dataset.xName
-// 	normalizedDataset.yName = dataset.yName
-// 	normalizedDataset.xMax = dataset.xMax
-// 	normalizedDataset.xMin = dataset.xMin
-// 	normalizedDataset.yMax = dataset.yMax
-// 	normalizedDataset.yMin = dataset.yMin
-// 	normalizedDataset.data = make([]Coordinate, len(dataset.data))
-// 	copy(normalizedDataset.data, dataset.data)
+func predict(c Classifier, i int) float64 {
+	return sigmoid(h(c, c.data[i][0], c.data[i][1]))
+}
 
-// 	// normalize
-// 	for i, c := range dataset.data {
-// 		normalizedDataset.data[i].Y = (c.Y - dataset.yMin) / (dataset.yMax - dataset.yMin)
-// 		normalizedDataset.data[i].X = (c.X - dataset.xMin) / (dataset.xMax - dataset.xMin)
-// 	}
+func logloss(c Classifier) float64 {
+	loss := 0.0
 
-// 	return normalizedDataset
-// }
-
-// func denormalizeThetas(dataset Dataset, theta0 float64, theta1 float64) (float64, float64) {
-
-// 	theta1 = (dataset.yMax - dataset.yMin) * theta1 / (dataset.xMax - dataset.xMin)
-// 	theta0 = dataset.yMin + ((dataset.yMax - dataset.yMin) * theta0) + theta1*(1-dataset.xMin)
-
-// 	return theta0, theta1
-// }
-
-func gradientDescent(dataset [][]float64) (float64, float64) {
-	var theta0, theta1 float64 = 0, 0
-	var delta0, delta1 float64 = 1, 1
-	var prevCost0, prevCost1 float64
-	m := float64(len(dataset))
-
-	for delta0 > 0.000001 || delta1 > 0.000001 {
-		cost0 := 0.0
-		cost1 := 0.0
-		for _, c := range dataset {
-			// c[0] is c.x
-			// c[1] is c.y
-			cost0 += c[0]
-		}
-		delta0 = math.Abs(prevCost0 - cost0)
-		delta1 = math.Abs(prevCost1 - cost1)
-		theta0 -= 0.01 * (cost0 / m)
-		theta1 -= 0.01 * (cost1 / m)
-		prevCost0 = cost0
-		prevCost1 = cost1
+	for i := range c.data {
+		realValue := c.data[i][2]
+		prediction := sigmoid(h(c, c.data[i][0], c.data[i][1]))
+		loss += -realValue*math.Log(prediction) - (1-realValue)*math.Log(1-prediction)
 	}
+	return loss
+}
 
-	return theta0, theta1
+func accuracy(c Classifier) float64 {
+	correct_pred := 0
+
+	for i := range c.data {
+		pred := sigmoid(h(c, c.data[i][0], c.data[i][1]))
+		if math.Round(pred) == c.data[i][2] {
+			correct_pred += 1
+		}
+	}
+	accuracy := float64(correct_pred) / float64(len(c.data)) * 100.0
+	fmt.Println(accuracy, "% accuracy")
+	return accuracy
+}
+
+func calcThetas(c Classifier, learningRate float64) Classifier {
+	m := float64(len(c.data))
+
+	grad_t0 := 0.0
+	grad_t1 := 0.0
+	grad_t2 := 0.0
+
+	for i := range c.data {
+		prediction := predict(c, i)
+		real := c.data[i][2]
+
+		loss := prediction - real
+		grad_t0 += 1 / m * loss
+		grad_t1 += 1 / m * loss * c.data[i][0]
+		grad_t2 += 1 / m * loss * c.data[i][1]
+	}
+	tmp0 := c.t0
+	tmp1 := c.t1
+	tmp2 := c.t2
+	c.t0 = tmp0 - (learningRate * grad_t0)
+	c.t1 = tmp1 - (learningRate * grad_t1)
+	c.t2 = tmp2 - (learningRate * grad_t2)
+	return c
+}
+
+func gradientDescent(c Classifier) Classifier {
+	fmt.Println("Gradient descent for", c.House)
+
+	for i := 0; i < 1000; i++ {
+		c = calcThetas(c, 0.01)
+	}
+	fmt.Println("THETAS", c.t0, c.t1, c.t2)
+	accuracy(c)
+	return c
 }
