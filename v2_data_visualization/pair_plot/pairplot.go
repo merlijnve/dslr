@@ -40,7 +40,7 @@ func combineImages(dataset [][]string, numericalFeatures []int) {
 	file, err := os.Create("pairplot.jpeg")
 	handleError(err, "Error: could not create pairplot")
 	err = jpeg.Encode(file, rgba, nil)
-	handleError(err, "Error: gim could save merged images")
+	handleError(err, "Error: gim could not save merged images")
 }
 
 func main() {

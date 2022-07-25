@@ -22,15 +22,16 @@ func featuresToScatter(s chart.ScatterChart, dataset [][]string, i1 int, i2 int)
 			handleError(err, "Could not parse \""+dataset[i][i1]+"\" to float")
 			val2, err := strconv.ParseFloat(dataset[i][i2], 64)
 			handleError(err, "Could not parse \""+dataset[i][i2]+"\" to float")
+
 			switch dataset[i][1] {
 			case "Hufflepuff":
 				huf = append(huf, chart.EPoint{X: val1, Y: val2})
 			case "Ravenclaw":
-				gry = append(gry, chart.EPoint{X: val1, Y: val2})
-			case "Gryffindor":
-				sly = append(sly, chart.EPoint{X: val1, Y: val2})
-			case "Slytherin":
 				rav = append(rav, chart.EPoint{X: val1, Y: val2})
+			case "Gryffindor":
+				gry = append(gry, chart.EPoint{X: val1, Y: val2})
+			case "Slytherin":
+				sly = append(sly, chart.EPoint{X: val1, Y: val2})
 			}
 		}
 	}
