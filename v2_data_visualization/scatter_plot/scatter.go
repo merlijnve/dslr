@@ -33,11 +33,11 @@ func featuresToScatter(s chart.ScatterChart, dataset [][]string, i1 int, i2 int)
 			case "Hufflepuff":
 				huf = append(huf, chart.EPoint{X: val1, Y: val2})
 			case "Ravenclaw":
-				gry = append(gry, chart.EPoint{X: val1, Y: val2})
-			case "Gryffindor":
-				sly = append(sly, chart.EPoint{X: val1, Y: val2})
-			case "Slytherin":
 				rav = append(rav, chart.EPoint{X: val1, Y: val2})
+			case "Gryffindor":
+				gry = append(gry, chart.EPoint{X: val1, Y: val2})
+			case "Slytherin":
+				sly = append(sly, chart.EPoint{X: val1, Y: val2})
 			}
 		}
 	}
