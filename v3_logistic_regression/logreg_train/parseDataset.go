@@ -27,8 +27,8 @@ func countClass(c Classifier) {
 	fmt.Println(amount, "/", len(c.data), "is", c.House)
 }
 
-func getDataPair(dataset [][]string, c Classifier) [][]float64 {
-	dataPair := make([][]float64, 0)
+func getDataPairs(dataset [][]string, c Classifier) [][]float64 {
+	dataPairs := make([][]float64, 0)
 	i0 := findIndexOfFeature(dataset, c.Feature0)
 	i1 := findIndexOfFeature(dataset, c.Feature1)
 	isClass := 0.0
@@ -46,10 +46,10 @@ func getDataPair(dataset [][]string, c Classifier) [][]float64 {
 			} else {
 				isClass = 0.0
 			}
-			dataPair = append(dataPair, []float64{val0, val1, isClass})
+			dataPairs = append(dataPairs, []float64{val0, val1, isClass})
 		}
 	}
-	return dataPair
+	return dataPairs
 }
 
 func readDataset() [][]string {

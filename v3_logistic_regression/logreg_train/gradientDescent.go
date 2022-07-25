@@ -41,7 +41,7 @@ func accuracy(c Classifier) float64 {
 		}
 	}
 	accuracy := float64(correct_pred) / float64(len(c.data)) * 100.0
-	fmt.Println(accuracy, "% accuracy")
+	fmt.Println(accuracy, "% accuracy\n")
 	return accuracy
 }
 
@@ -74,7 +74,7 @@ func gradientDescent(c Classifier) Classifier {
 	fmt.Println("Gradient descent for", c.House)
 
 	for i := 0; i < 1000; i++ {
-		c = calcThetas(c, 0.01)
+		c = calcThetas(c, 0.1)
 	}
 	fmt.Println("THETAS", c.t0, c.t1, c.t2)
 	accuracy(c)

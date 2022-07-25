@@ -41,9 +41,9 @@ func initClassifier() []Classifier {
 	classifiers := make([]Classifier, 0)
 
 	classifiers = append(classifiers, Classifier{House: "Hufflepuff", Feature0: "Astronomy", Feature1: "Transfiguration"})
-	classifiers = append(classifiers, Classifier{House: "Gryffindor", Feature0: "Charms", Feature1: "Herbology"})
-	classifiers = append(classifiers, Classifier{House: "Slytherin", Feature0: "History of Magic", Feature1: "Transfiguration"})
-	classifiers = append(classifiers, Classifier{House: "Ravenclaw", Feature0: "Care of Magical Creatures", Feature1: "Charms"})
+	classifiers = append(classifiers, Classifier{House: "Gryffindor", Feature0: "Astronomy", Feature1: "Transfiguration"})
+	classifiers = append(classifiers, Classifier{House: "Slytherin", Feature0: "Charms", Feature1: "Divination"})
+	classifiers = append(classifiers, Classifier{House: "Ravenclaw", Feature0: "Muggle Studies", Feature1: "Charms"})
 
 	return classifiers
 }
@@ -52,11 +52,10 @@ func main() {
 	dataset := readDataset()
 	classifiers := initClassifier()
 
-	// i := 0
 	for i := range classifiers {
 		c := &classifiers[i]
 		fmt.Println("Making classifier for", c.House, "using:\n", c.Feature0, "vs", c.Feature1)
-		c.data = getDataPair(dataset, *c)
+		c.data = getDataPairs(dataset, *c)
 		classifiers[i] = gradientDescent(*c)
 	}
 	plotScatter(classifiers)
