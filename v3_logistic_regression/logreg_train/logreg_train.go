@@ -17,9 +17,9 @@ type Classifier struct {
 	Feature0 string
 	Feature1 string
 	data     [][]float64
-	t0       float64
-	t1       float64
-	t2       float64
+	T0       float64
+	T1       float64
+	T2       float64
 }
 
 func handleError(err error, msg string) {
@@ -31,9 +31,8 @@ func handleError(err error, msg string) {
 
 func writeThetas(c []Classifier) {
 	file, err := json.MarshalIndent(c, "", " ")
-	handleError(err, "Error: could not create indent the theta values to json")
-
-	err = ioutil.WriteFile("thetaValues.json", file, 0644)
+	handleError(err, "Error: could not indent the theta values to json")
+	err = ioutil.WriteFile("../thetaValues.json", file, 0644)
 	handleError(err, "Error: could not create theta values file")
 }
 

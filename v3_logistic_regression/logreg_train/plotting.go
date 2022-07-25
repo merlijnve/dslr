@@ -37,7 +37,7 @@ func plotScatter(classifiers []Classifier) {
 
 		s = featuresToScatter(s, c)
 		s.AddFunc("Decision boundary", func(x float64) float64 {
-			return -(c.t1/c.t2)*x - (c.t0 / c.t2)
+			return -(c.T1/c.T2)*x - (c.T0 / c.T2)
 		}, chart.PlotStyleLines, chart.Style{})
 
 		dumper := NewDumper("tmp/"+c.Feature0+"-"+c.Feature1, 1, 1, 1000, 1000)

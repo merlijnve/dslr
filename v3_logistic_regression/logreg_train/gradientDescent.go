@@ -13,7 +13,7 @@ func sigmoid(z float64) float64 {
 // hypothesis function
 // h = θ0 + θ1 * x1 + θ2 * x2
 func h(c Classifier, x1 float64, x2 float64) float64 {
-	return c.t0 + c.t1*x1 + c.t2*x2
+	return c.T0 + c.T1*x1 + c.T2*x2
 }
 
 func predict(c Classifier, i int) float64 {
@@ -61,12 +61,12 @@ func calcThetas(c Classifier, learningRate float64) Classifier {
 		grad_t1 += 1 / m * loss * c.data[i][0]
 		grad_t2 += 1 / m * loss * c.data[i][1]
 	}
-	tmp0 := c.t0
-	tmp1 := c.t1
-	tmp2 := c.t2
-	c.t0 = tmp0 - (learningRate * grad_t0)
-	c.t1 = tmp1 - (learningRate * grad_t1)
-	c.t2 = tmp2 - (learningRate * grad_t2)
+	tmp0 := c.T0
+	tmp1 := c.T1
+	tmp2 := c.T2
+	c.T0 = tmp0 - (learningRate * grad_t0)
+	c.T1 = tmp1 - (learningRate * grad_t1)
+	c.T2 = tmp2 - (learningRate * grad_t2)
 	return c
 }
 
@@ -74,9 +74,9 @@ func gradientDescent(c Classifier) Classifier {
 	fmt.Println("Gradient descent for", c.House)
 
 	for i := 0; i < 1000; i++ {
-		c = calcThetas(c, 0.1)
+		c = calcThetas(c, 1)
 	}
-	fmt.Println("THETAS", c.t0, c.t1, c.t2)
+	fmt.Println("THETAS", c.T0, c.T1, c.T2)
 	accuracy(c)
 	return c
 }

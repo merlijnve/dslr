@@ -1,0 +1,34 @@
+[
+ {
+  "House": "Hufflepuff",
+  "Feature0": "Astronomy",
+  "Feature1": "Transfiguration",
+  "T0": -12.553601536036103,
+  "T1": 232.55481998197249,
+  "T2": -137.8112867207885
+ },
+ {
+  "House": "Gryffindor",
+  "Feature0": "Astronomy",
+  "Feature1": "Transfiguration",
+  "T0": 11.821194837210228,
+  "T1": 158.59673693262945,
+  "T2": -121.27167591598337
+ },
+ {
+  "House": "Slytherin",
+  "Feature0": "Charms",
+  "Feature1": "Divination",
+  "T0": -0.16317119861577806,
+  "T1": -0.7083041960574136,
+  "T2": -123.78317630114111
+ },
+ {
+  "House": "Ravenclaw",
+  "Feature0": "Muggle Studies",
+  "Feature1": "Charms",
+  "T0": -0.31939286929257327,
+  "T1": 194.4014523770493,
+  "T2": 107.81095825616389
+ }
+]
