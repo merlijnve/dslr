@@ -35,7 +35,7 @@ func accuracy(c Classifier) float64 {
 	correct_pred := 0
 
 	for i := range c.data {
-		pred := sigmoid(h(c, c.data[i][0], c.data[i][1]))
+		pred := predict(c, i)
 		if math.Round(pred) == c.data[i][2] {
 			correct_pred += 1
 		}
@@ -73,7 +73,7 @@ func calcThetas(c Classifier, learningRate float64) Classifier {
 func gradientDescent(c Classifier) Classifier {
 	fmt.Println("Gradient descent for", c.House)
 
-	for i := 0; i < 1000; i++ {
+	for i := 0; i < 10000; i++ {
 		c = calcThetas(c, 1)
 	}
 	fmt.Println("THETAS", c.T0, c.T1, c.T2)

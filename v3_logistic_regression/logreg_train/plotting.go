@@ -15,15 +15,31 @@ func featuresToScatter(s chart.ScatterChart, c Classifier) chart.ScatterChart {
 
 	for i := range c.data {
 		if c.data[i][2] == 1.0 {
-			f0 = append(f0, chart.EPoint{X: c.data[i][1], Y: c.data[i][0]})
+			f0 = append(f0, chart.EPoint{Y: c.data[i][1], X: c.data[i][0]})
 		} else {
-			f1 = append(f1, chart.EPoint{X: c.data[i][1], Y: c.data[i][0]})
+			f1 = append(f1, chart.EPoint{Y: c.data[i][1], X: c.data[i][0]})
 		}
 	}
 	s.AddData(c.House, f0, chart.PlotStylePoints, chart.Style{LineColor: color.NRGBA{0x00, 0xff, 0x00, 0xff}})
 	s.AddData("others", f1, chart.PlotStylePoints, chart.Style{LineColor: color.NRGBA{0xff, 0x00, 0x00, 0xff}})
 	return s
 }
+
+// func featuresToScatter(s chart.ScatterChart, c Classifier) chart.ScatterChart {
+// 	f0 := make([]chart.EPoint, 0)
+// 	f1 := make([]chart.EPoint, 0)
+
+// 	for i := range c.data {
+// 		if c.data[i][2] == 1.0 {
+// 			f0 = append(f0, chart.EPoint{X: c.data[i][1], Y: c.data[i][0]})
+// 		} else {
+// 			f1 = append(f1, chart.EPoint{X: c.data[i][1], Y: c.data[i][0]})
+// 		}
+// 	}
+// 	s.AddData(c.House, f0, chart.PlotStylePoints, chart.Style{LineColor: color.NRGBA{0x00, 0xff, 0x00, 0xff}})
+// 	s.AddData("others", f1, chart.PlotStylePoints, chart.Style{LineColor: color.NRGBA{0xff, 0x00, 0x00, 0xff}})
+// 	return s
+// }
 
 func plotScatter(classifiers []Classifier) {
 	grids := make([]*gim.Grid, 0)
@@ -32,19 +48,21 @@ func plotScatter(classifiers []Classifier) {
 
 	for _, c := range classifiers {
 		s := chart.ScatterChart{Title: c.Feature0 + " - " + c.Feature1}
-		s.XRange.Label = c.Feature1
-		s.YRange.Label = c.Feature0
+		s.XRange.Label = c.Feature0
+		s.YRange.Label = c.Feature1
 
 		s = featuresToScatter(s, c)
+		// s.AddData("decision boundary point 1", []chart.EPoint{{X: 0, Y: -(c.T0 / c.T2)}}, chart.PlotStylePoints, chart.Style{LineColor: color.NRGBA{0x00, 0x00, 0xff, 0xff}})
+		// s.AddData("decision boundary point 2", []chart.EPoint{{Y: 0, X: -(c.T0 / c.T1)}}, chart.PlotStylePoints, chart.Style{LineColor: color.NRGBA{0x00, 0x00, 0xff, 0xff}})
 		s.AddFunc("Decision boundary", func(x float64) float64 {
 			return -(c.T1/c.T2)*x - (c.T0 / c.T2)
 		}, chart.PlotStyleLines, chart.Style{})
 
-		dumper := NewDumper("tmp/"+c.Feature0+"-"+c.Feature1, 1, 1, 1000, 1000)
+		dumper := NewDumper("tmp/"+c.House, 1, 1, 1000, 1000)
 		dumper.Plot(&s)
 		dumper.Close()
 
-		g := gim.Grid{ImageFilePath: "tmp/" + c.Feature0 + "-" + c.Feature1 + ".jpeg"}
+		g := gim.Grid{ImageFilePath: "tmp/" + c.House + ".jpeg"}
 		grids = append(grids, &g)
 	}
 	// create merged image
