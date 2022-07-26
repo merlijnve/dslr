@@ -39,8 +39,8 @@ func writeThetas(c []Classifier) {
 func initClassifier() []Classifier {
 	classifiers := make([]Classifier, 0)
 
-	classifiers = append(classifiers, Classifier{House: "Hufflepuff", Feature0: "Astronomy", Feature1: "Transfiguration"})
-	classifiers = append(classifiers, Classifier{House: "Gryffindor", Feature0: "Astronomy", Feature1: "Transfiguration"})
+	classifiers = append(classifiers, Classifier{House: "Hufflepuff", Feature0: "Flying", Feature1: "Astronomy"})
+	classifiers = append(classifiers, Classifier{House: "Gryffindor", Feature0: "History of Magic", Feature1: "Herbology"})
 	classifiers = append(classifiers, Classifier{House: "Slytherin", Feature0: "Charms", Feature1: "Divination"})
 	classifiers = append(classifiers, Classifier{House: "Ravenclaw", Feature0: "Muggle Studies", Feature1: "Charms"})
 
