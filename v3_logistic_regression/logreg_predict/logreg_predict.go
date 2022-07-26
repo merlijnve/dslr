@@ -85,28 +85,23 @@ func getFeatureIndexes(f1 string, f2 string, dataset [][]string) (int, int) {
 }
 
 func comparePredictionsAndReturnHighest(classifiers []Classifier) {
-	// for i := range classifiers {
-	// 	fmt.Println(classifiers[i].House, classifiers[i].Prediction)
-	// }
 	var highestClassifier Classifier
 	highestClassifier = classifiers[0]
 	for _, classifier := range classifiers {
+		fmt.Println(classifier.House, classifier.Prediction)
 		if classifier.Prediction > highestClassifier.Prediction {
 			highestClassifier = classifier
 		}
 	}
-	fmt.Println("Predicted:", highestClassifier.House)
+	fmt.Println(highestClassifier.House)
 }
 
 func main() {
 	dataset, classifiers := readThetaFile()
-	// _, classifiers := readThetaFile()
 	for i := range dataset {
 		if i != 0 {
 			for cI := range classifiers {
-				// fmt.Println(classifiers[cI])
 				i1, i2 := getFeatureIndexes(classifiers[cI].Feature0, classifiers[cI].Feature1, dataset)
-				// fmt.Println(i, i1, i2)
 				if dataset[i][i1] != "" && dataset[i][i2] != "" {
 					val1, err := strconv.ParseFloat(dataset[i][i1], 64)
 					handleError(err, "Error: could not parse i1 "+dataset[i][i1])
@@ -115,7 +110,7 @@ func main() {
 					classifiers[cI].Prediction = predict(classifiers[cI], val1, val2)
 				}
 			}
+			comparePredictionsAndReturnHighest(classifiers)
 		}
-		comparePredictionsAndReturnHighest(classifiers)
 	}
 }
