@@ -73,7 +73,7 @@ func calcThetas(c Classifier, learningRate float64) Classifier {
 func gradientDescent(c Classifier) Classifier {
 	fmt.Println("Gradient descent for", c.House)
 
-	for i := 0; i < 1000; i++ {
+	for i := 0; i < 10000; i++ {
 		c = calcThetas(c, 0.001)
 	}
 	fmt.Println("THETAS", c.T0, c.T1, c.T2)

@@ -47,9 +47,40 @@ func initClassifier() []Classifier {
 	return classifiers
 }
 
+// func initClassifier() []Classifier {
+// 	classifiers := make([]Classifier, 0)
+
+// 	classifiers = append(classifiers, Classifier{House: "Hufflepuff", Feature0: "Flying", Feature1: "Astronomy"})
+// 	classifiers = append(classifiers, Classifier{House: "Gryffindor", Feature0: "History of Magic", Feature1: "Herbology"})
+// 	classifiers = append(classifiers, Classifier{House: "Slytherin", Feature0: "Charms", Feature1: "Divination"})
+// 	classifiers = append(classifiers, Classifier{House: "Ravenclaw", Feature0: "Muggle Studies", Feature1: "Charms"})
+
+// 	return classifiers
+// }
+
 func main() {
 	dataset := readDataset()
 	classifiers := initClassifier()
+
+	// features := []string{"Arithmancy",
+	// 	"Astronomy",
+	// 	"Herbology",
+	// 	"Defense Against the Dark Arts",
+	// 	"Divination",
+	// 	"Muggle Studies",
+	// 	"Ancient Runes",
+	// 	"History of Magic",
+	// 	"Transfiguration",
+	// 	"Potions",
+	// 	"Care of Magical Creatures",
+	// 	"Charms",
+	// 	"Flying"}
+
+	// for i := range features {
+	// 	for j := i + 1; j < len(features); j++ {
+	// 		fmt.Println(features[i], " WITH ", features[j])
+	// 	}
+	// }
 
 	for i := range classifiers {
 		c := &classifiers[i]

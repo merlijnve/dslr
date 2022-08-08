@@ -84,20 +84,29 @@ func getFeatureIndexes(f1 string, f2 string, dataset [][]string) (int, int) {
 	return i1, i2
 }
 
-func comparePredictionsAndReturnHighest(classifiers []Classifier) {
+func comparePredictionsAndReturnHighest(classifiers []Classifier) string {
 	var highestClassifier Classifier
 	highestClassifier = classifiers[0]
 	for _, classifier := range classifiers {
-		fmt.Println(classifier.House, classifier.Prediction)
 		if classifier.Prediction > highestClassifier.Prediction {
 			highestClassifier = classifier
 		}
 	}
-	fmt.Println(highestClassifier.House)
+	return highestClassifier.House
+}
+
+func writeLineToFile(file *os.File, line string) {
+	_, err := file.WriteString(line + "\n")
+	handleError(err, "Error: could not write to file")
 }
 
 func main() {
 	dataset, classifiers := readThetaFile()
+
+	//open new file for writing
+	prediction_file, err := os.Create("houses.csv")
+	handleError(err, "Error: could not create prediction file (ran out of memory?)")
+	writeLineToFile(prediction_file, "Index,Hogwarts House")
 	for i := range dataset {
 		if i != 0 {
 			for cI := range classifiers {
@@ -110,7 +119,8 @@ func main() {
 					classifiers[cI].Prediction = predict(classifiers[cI], val1, val2)
 				}
 			}
-			comparePredictionsAndReturnHighest(classifiers)
+			result := comparePredictionsAndReturnHighest(classifiers)
+			writeLineToFile(prediction_file, dataset[i][0]+","+result)
 		}
 	}
 }
