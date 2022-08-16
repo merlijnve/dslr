@@ -1,4 +1,0 @@
-TRAINING FILE
-Correct:  1502
-Incorrect:  98
-Accuracy:  93.875 %
