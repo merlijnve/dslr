@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/csv"
 	"fmt"
+	"math"
 	"os"
 	"strconv"
 )
@@ -16,15 +17,34 @@ func findIndexOfFeature(dataset [][]string, feature string) int {
 	return -1
 }
 
-func countClass(c Classifier) {
-	amount := 0
-
+func findMean(c *Classifier) Classifier {
 	for i := range c.data {
-		if c.data[i][2] == 1.0 {
-			amount += 1
-		}
+		c.Mean0 += c.data[i][0]
+		c.Mean1 += c.data[i][1]
 	}
-	fmt.Println(amount, "/", len(c.data), "is", c.House)
+	c.Mean0 /= float64(len(c.data))
+	c.Mean1 /= float64(len(c.data))
+	return *c
+}
+
+func findStd(c *Classifier) Classifier {
+	for i := range c.data {
+		c.Std0 += math.Pow(c.data[i][0]-c.Mean0, 2)
+		c.Std1 += math.Pow(c.data[i][1]-c.Mean1, 2)
+	}
+	c.Std0 = math.Sqrt(c.Std0 / float64(len(c.data)))
+	c.Std1 = math.Sqrt(c.Std1 / float64(len(c.data)))
+	return *c
+}
+
+func standardization(c Classifier) Classifier {
+	c = findMean(&c)
+	c = findStd(&c)
+	for i := range c.data {
+		c.data[i][0] = (c.data[i][0] - c.Mean0) / c.Std0
+		c.data[i][1] = (c.data[i][1] - c.Mean1) / c.Std1
+	}
+	return c
 }
 
 func getDataPairs(dataset [][]string, c Classifier) [][]float64 {

@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"os"
 )
 
@@ -20,6 +19,11 @@ type Classifier struct {
 	T0       float64
 	T1       float64
 	T2       float64
+	Accuracy float64
+	Mean0    float64
+	Mean1    float64
+	Std0     float64
+	Std1     float64
 }
 
 func handleError(err error, msg string) {
@@ -32,61 +36,31 @@ func handleError(err error, msg string) {
 func writeThetas(c []Classifier) {
 	file, err := json.MarshalIndent(c, "", " ")
 	handleError(err, "Error: could not indent the theta values to json")
-	err = ioutil.WriteFile("../thetaValues.json", file, 0644)
+	err = os.WriteFile("./thetaValues.json", file, 0644)
 	handleError(err, "Error: could not create theta values file")
 }
 
-func initClassifier() []Classifier {
+func initClassifiers() []Classifier {
 	classifiers := make([]Classifier, 0)
 
-	classifiers = append(classifiers, Classifier{House: "Hufflepuff", Feature0: "Flying", Feature1: "Astronomy"})
-	classifiers = append(classifiers, Classifier{House: "Gryffindor", Feature0: "History of Magic", Feature1: "Herbology"})
-	classifiers = append(classifiers, Classifier{House: "Slytherin", Feature0: "Charms", Feature1: "Divination"})
-	classifiers = append(classifiers, Classifier{House: "Ravenclaw", Feature0: "Muggle Studies", Feature1: "Charms"})
+	classifiers = append(classifiers, Classifier{House: "Hufflepuff", Feature0: "Astronomy", Feature1: "Transfiguration"})
+	classifiers = append(classifiers, Classifier{House: "Gryffindor", Feature0: "Charms", Feature1: "Flying"})
+	classifiers = append(classifiers, Classifier{House: "Slytherin", Feature0: "Potions", Feature1: "Divination"})
+	classifiers = append(classifiers, Classifier{House: "Ravenclaw", Feature0: "Charms", Feature1: "Muggle Studies"})
 
 	return classifiers
 }
 
-// func initClassifier() []Classifier {
-// 	classifiers := make([]Classifier, 0)
-
-// 	classifiers = append(classifiers, Classifier{House: "Hufflepuff", Feature0: "Flying", Feature1: "Astronomy"})
-// 	classifiers = append(classifiers, Classifier{House: "Gryffindor", Feature0: "History of Magic", Feature1: "Herbology"})
-// 	classifiers = append(classifiers, Classifier{House: "Slytherin", Feature0: "Charms", Feature1: "Divination"})
-// 	classifiers = append(classifiers, Classifier{House: "Ravenclaw", Feature0: "Muggle Studies", Feature1: "Charms"})
-
-// 	return classifiers
-// }
-
 func main() {
 	dataset := readDataset()
-	classifiers := initClassifier()
 
-	// features := []string{"Arithmancy",
-	// 	"Astronomy",
-	// 	"Herbology",
-	// 	"Defense Against the Dark Arts",
-	// 	"Divination",
-	// 	"Muggle Studies",
-	// 	"Ancient Runes",
-	// 	"History of Magic",
-	// 	"Transfiguration",
-	// 	"Potions",
-	// 	"Care of Magical Creatures",
-	// 	"Charms",
-	// 	"Flying"}
-
-	// for i := range features {
-	// 	for j := i + 1; j < len(features); j++ {
-	// 		fmt.Println(features[i], " WITH ", features[j])
-	// 	}
-	// }
-
+	classifiers := initClassifiers()
 	for i := range classifiers {
-		c := &classifiers[i]
-		fmt.Println("Making classifier for", c.House, "using:\n", c.Feature0, "vs", c.Feature1)
-		c.data = getDataPairs(dataset, *c)
-		classifiers[i] = gradientDescent(*c)
+		fmt.Println("1. Making classifier for", classifiers[i].House, "using:\n", classifiers[i].Feature0, "-", classifiers[i].Feature1)
+		classifiers[i].data = getDataPairs(dataset, classifiers[i])
+		classifiers[i] = standardization(classifiers[i])
+		classifiers[i] = gradientDescent(classifiers[i])
+		fmt.Print("\n")
 	}
 	plotScatter(classifiers)
 	writeThetas(classifiers)

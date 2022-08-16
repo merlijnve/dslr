@@ -20,17 +20,6 @@ func predict(c Classifier, i int) float64 {
 	return sigmoid(h(c, c.data[i][0], c.data[i][1]))
 }
 
-func logloss(c Classifier) float64 {
-	loss := 0.0
-
-	for i := range c.data {
-		realValue := c.data[i][2]
-		prediction := sigmoid(h(c, c.data[i][0], c.data[i][1]))
-		loss += -realValue*math.Log(prediction) - (1-realValue)*math.Log(1-prediction)
-	}
-	return loss
-}
-
 func accuracy(c Classifier) float64 {
 	correct_pred := 0
 
@@ -41,16 +30,16 @@ func accuracy(c Classifier) float64 {
 		}
 	}
 	accuracy := float64(correct_pred) / float64(len(c.data)) * 100.0
-	fmt.Println(accuracy, "% accuracy\n")
 	return accuracy
 }
 
-func calcThetas(c Classifier, learningRate float64) Classifier {
+func calcThetas(c Classifier, learningRate float64) (Classifier, float64) {
 	m := float64(len(c.data))
 
 	grad_t0 := 0.0
 	grad_t1 := 0.0
 	grad_t2 := 0.0
+	deltaGradient := 0.0
 
 	for i := range c.data {
 		prediction := predict(c, i)
@@ -67,16 +56,18 @@ func calcThetas(c Classifier, learningRate float64) Classifier {
 	c.T0 = tmp0 - (learningRate * grad_t0)
 	c.T1 = tmp1 - (learningRate * grad_t1)
 	c.T2 = tmp2 - (learningRate * grad_t2)
-	return c
+	deltaGradient = math.Abs(deltaGradient - (grad_t0 + grad_t1 + grad_t2))
+	return c, deltaGradient
 }
 
 func gradientDescent(c Classifier) Classifier {
-	fmt.Println("Gradient descent for", c.House)
+	fmt.Println("2. Starting Gradient Descent")
 
-	for i := 0; i < 10000; i++ {
-		c = calcThetas(c, 0.001)
+	grad := 1.0
+	for i := 0; grad > 0.001; i++ {
+		c, grad = calcThetas(c, 0.03)
 	}
-	fmt.Println("THETAS", c.T0, c.T1, c.T2)
-	accuracy(c)
+	c.Accuracy = accuracy(c)
+	fmt.Println("3. Finished with training set prediction accuracy of:\n", c.Accuracy, "%")
 	return c
 }
