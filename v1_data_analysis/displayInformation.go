@@ -18,6 +18,7 @@ func formatCount(floatData [][]float64, numericalFeatures []int) string {
 	return result
 }
 
+// square root of the sum of the squares of the differences between each value and the mean
 func formatStd(floatData [][]float64, numericalFeatures []int) string {
 	result := "Std\t"
 
@@ -40,6 +41,7 @@ func formatStd(floatData [][]float64, numericalFeatures []int) string {
 	return result
 }
 
+// sum / count
 func formatMean(floatData [][]float64, numericalFeatures []int) string {
 	result := "Mean\t"
 
@@ -55,6 +57,8 @@ func formatMean(floatData [][]float64, numericalFeatures []int) string {
 	return result
 }
 
+// formats the min and max values of the numerical features
+// returns a formatted string as result
 func formatMinMax(floatData [][]float64, numericalFeatures []int, flag string) string {
 	result := ""
 	switch flag {
@@ -75,6 +79,7 @@ func formatMinMax(floatData [][]float64, numericalFeatures []int, flag string) s
 	return result
 }
 
+// formats the feature names into a string
 func formatFeatures(dataset [][]string, numericalFeatures []int) string {
 	result := "\t"
 
@@ -84,7 +89,8 @@ func formatFeatures(dataset [][]string, numericalFeatures []int) string {
 	return result
 }
 
-// calculates percentiles using linear interpolation
+// calculates percentiles using interpolation
+// returns a formatted string as result
 func formatPercentiles(floatData [][]float64, numericalFeatures []int, flag string) string {
 	result := ""
 
@@ -100,22 +106,32 @@ func formatPercentiles(floatData [][]float64, numericalFeatures []int, flag stri
 		rank := 0.0
 		switch flag {
 		case "25":
-			rank = (float64(len(floatData[i]))+1)/4 - 1
+			rank = float64(0.25) * float64((len(floatData[i]) - 1))
 		case "50":
-			rank = (float64(len(floatData[i]))+1)/2 - 1
+			rank = float64(0.50) * float64((len(floatData[i]) - 1))
 		case "75":
-			rank = (float64(len(floatData[i]))+1)/4*3 - 1
+			rank = float64(0.75) * float64((len(floatData[i]) - 1))
 		}
-		// check if value has fractional part or is integer
+		// checks if value has fractional part or is integer
 		if rank == float64(int(rank)) {
 			result += strconv.FormatFloat(floatData[i][int(rank)], 'f', 6, 64) + "\t"
 		} else {
-			result += strconv.FormatFloat(floatData[i][int(rank)]+(rank-float64(int(rank)))*(floatData[i][int(rank)+1]-floatData[i][int(rank)]), 'f', 6, 64) + "\t"
+			// interpolate in case of rank with fractional part
+			fraction := math.Abs(rank - float64(int(rank)))
+			rank = math.Floor(rank)
+			val0 := floatData[i][int(rank)]
+			val1 := val0
+			if (rank + 1.0) < float64(len(floatData[i])) {
+				val1 = floatData[i][int(rank)+1]
+			}
+			val := val0 + (val1-val0)*fraction
+			result += strconv.FormatFloat(val, 'f', 6, 64) + "\t"
 		}
 	}
 	return result
 }
 
+// parses the dataset to floats
 func parseFloatData(dataset [][]string, numericalFeatures []int) [][]float64 {
 	floatData := make([][]float64, len(dataset[0]))
 
@@ -137,7 +153,6 @@ func parseFloatData(dataset [][]string, numericalFeatures []int) [][]float64 {
 }
 
 func displayInformation(dataset [][]string, numericalFeatures []int) {
-
 	floatData := parseFloatData(dataset[1:], numericalFeatures)
 	w := tabwriter.NewWriter(os.Stdout, 16, 0, 2, ' ', 1)
 
