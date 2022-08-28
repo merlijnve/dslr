@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/csv"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"math"
@@ -150,6 +151,9 @@ func main() {
 		os.Exit(0)
 	}
 	dataset := readDataset()
+	if len(dataset) == 0 {
+		handleError(errors.New("dataset is empty"), "Error: dataset is empty")
+	}
 	classifiers := readThetaFile()
 
 	for cI := range classifiers {
