@@ -1,8 +1,10 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"image/jpeg"
+	"math"
 	"os"
 
 	gim "github.com/ozankasikci/go-image-merge"
@@ -34,7 +36,8 @@ func combineImages(dataset [][]string, numericalFeatures []int) {
 		}
 	}
 
-	rgba, err := gim.New(grids, len(numericalFeatures), len(numericalFeatures)).Merge()
+	dimension := math.Ceil(math.Sqrt(float64(len(grids))))
+	rgba, err := gim.New(grids, int(dimension), int(dimension)).Merge()
 	handleError(err, "Error: gim could not merge feature images")
 
 	file, err := os.Create("pairplot.jpeg")
@@ -45,15 +48,22 @@ func combineImages(dataset [][]string, numericalFeatures []int) {
 
 func main() {
 	dataset := readDataset()
+	if len(dataset) <= 1 {
+		handleError(errors.New("empty dataset"), "Error: dataset is empty")
+	}
+
 	numericalFeatures := identifyNumericalFeatures(dataset)
 
 	err := os.MkdirAll("tmp", 0755)
 	handleError(err, "Error: could not create folder tmp")
 
+	fmt.Println("Creating feature images...")
 	plotScatter(dataset, numericalFeatures)
 	for _, i := range numericalFeatures {
 		createHistogram(dataset[0][i], i, dataset)
 	}
+	fmt.Println("Creating pairplot...")
 	combineImages(dataset, numericalFeatures)
 	os.RemoveAll("tmp/")
+	fmt.Println("Done: created pairplot.jpeg")
 }
