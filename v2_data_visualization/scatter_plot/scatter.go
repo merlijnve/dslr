@@ -1,8 +1,10 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"image/jpeg"
+	"math"
 	"os"
 	"strconv"
 
@@ -41,10 +43,18 @@ func featuresToScatter(s chart.ScatterChart, dataset [][]string, i1 int, i2 int)
 			}
 		}
 	}
-	s.AddData("Hufflepuff", huf, chart.PlotStylePoints, chart.Style{})
-	s.AddData("Gryffindor", gry, chart.PlotStylePoints, chart.Style{})
-	s.AddData("Slytherin", sly, chart.PlotStylePoints, chart.Style{})
-	s.AddData("Ravenclaw", rav, chart.PlotStylePoints, chart.Style{})
+	if len(huf) > 0 {
+		s.AddData("Hufflepuff", huf, chart.PlotStylePoints, chart.Style{})
+	}
+	if len(gry) > 0 {
+		s.AddData("Gryffindor", gry, chart.PlotStylePoints, chart.Style{})
+	}
+	if len(sly) > 0 {
+		s.AddData("Slytherin", sly, chart.PlotStylePoints, chart.Style{})
+	}
+	if len(rav) > 0 {
+		s.AddData("Ravenclaw", rav, chart.PlotStylePoints, chart.Style{})
+	}
 	return s
 }
 
@@ -64,6 +74,10 @@ func plotScatter(dataset [][]string, numericalFeatures []int) {
 
 			s = featuresToScatter(s, dataset, numericalFeatures[i], numericalFeatures[j])
 
+			if len(s.Data) == 0 {
+				handleError(errors.New("no houses in dataset"), "Error: no houses in dataset")
+			}
+			fmt.Println("Plotting " + featureI + " - " + featureJ)
 			dumper := NewDumper("tmp/"+featureI+"-"+featureJ, 1, 1, 1000, 1000)
 			dumper.Plot(&s)
 			dumper.Close()
@@ -73,7 +87,9 @@ func plotScatter(dataset [][]string, numericalFeatures []int) {
 		}
 	}
 	// create merged image
-	rgba, err := gim.New(grids, len(numericalFeatures)-1, (len(numericalFeatures))/2).Merge()
+	fmt.Println("Creating merged image")
+	dimension := math.Ceil(math.Sqrt(float64(len(grids))))
+	rgba, err := gim.New(grids, int(dimension), int(dimension)).Merge()
 	handleError(err, "Error: gim could not merge feature images (did you run out of space?)")
 
 	file, err := os.Create("scatter.jpeg")
@@ -81,11 +97,20 @@ func plotScatter(dataset [][]string, numericalFeatures []int) {
 	err = jpeg.Encode(file, rgba, nil)
 	handleError(err, "Error: gim could save merged images")
 
+	fmt.Println("Removing tmp/*")
 	os.RemoveAll("tmp/")
 }
 
 func main() {
 	dataset := readDataset()
+	if len(dataset) <= 1 {
+		handleError(errors.New("empty dataset"), "Error: dataset is empty")
+	}
+
 	numericalFeatures := identifyNumericalFeatures(dataset)
+	if len(numericalFeatures) < 2 {
+		handleError(errors.New("not enough features"), "Error: not enough (numerical) features in dataset")
+	}
 	plotScatter(dataset, numericalFeatures)
+	fmt.Println("Done: created scatter.jpeg")
 }

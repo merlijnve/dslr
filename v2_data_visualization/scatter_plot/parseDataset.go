@@ -2,7 +2,7 @@ package main
 
 import (
 	"encoding/csv"
-	"fmt"
+	"errors"
 	"os"
 	"strconv"
 )
@@ -11,6 +11,7 @@ func identifyNumericalFeatures(dataset [][]string) []int {
 	numericalFeatures := make([]int, 0)
 
 	for i := 0; i < len(dataset[0]); i++ {
+		emptyFeatures := 0
 		numerical := true
 		for _, row := range dataset[1:] {
 			if row[i] != "" {
@@ -18,9 +19,11 @@ func identifyNumericalFeatures(dataset [][]string) []int {
 				if err != nil {
 					numerical = false
 				}
+			} else {
+				emptyFeatures++
 			}
 		}
-		if numerical {
+		if numerical && emptyFeatures < len(dataset)-1 {
 			numericalFeatures = append(numericalFeatures, i)
 		}
 	}
@@ -36,12 +39,11 @@ func readDataset() [][]string {
 		handleError(err, "Error: could not read file \""+os.Args[1]+"\"")
 		defer file.Close()
 	} else {
-		fmt.Println("Use ./scatter [dataset filename]")
-		os.Exit(0)
+		handleError(errors.New("no file specified"), "Use ./scatter [dataset filename]")
 	}
 
 	csv := csv.NewReader(file)
 	records, err := csv.ReadAll()
-	handleError(err, "Error: could not read csv")
+	handleError(err, "Error: invalid csv")
 	return records
 }
