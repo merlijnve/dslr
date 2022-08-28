@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/csv"
+	"errors"
 	"fmt"
 	"math"
 	"os"
@@ -53,6 +54,9 @@ func getDataPairs(dataset [][]string, c Classifier) [][]float64 {
 	i1 := findIndexOfFeature(dataset, c.Feature1)
 	isClass := 0.0
 
+	if (i0 == -1) || (i1 == -1) {
+		handleError(errors.New("feature not found"), "Error: feature not found in dataset")
+	}
 	for i := range dataset {
 		if i != 0 && dataset[i][i0] != "" && dataset[i][i1] != "" {
 			val0, err := strconv.ParseFloat(dataset[i][i0], 64)

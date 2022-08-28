@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"os"
 )
@@ -53,11 +54,17 @@ func initClassifiers() []Classifier {
 
 func main() {
 	dataset := readDataset()
+	if len(dataset) == 0 {
+		handleError(errors.New("dataset is empty"), "Error: dataset is empty")
+	}
 
 	classifiers := initClassifiers()
 	for i := range classifiers {
 		fmt.Println("1. Making classifier for", classifiers[i].House, "using:\n", classifiers[i].Feature0, "-", classifiers[i].Feature1)
 		classifiers[i].data = getDataPairs(dataset, classifiers[i])
+		if len(classifiers[i].data) == 0 {
+			handleError(errors.New("data is empty"), "Error: data is empty for "+classifiers[i].House)
+		}
 		classifiers[i] = standardization(classifiers[i])
 		classifiers[i] = gradientDescent(classifiers[i])
 		fmt.Print("\n")

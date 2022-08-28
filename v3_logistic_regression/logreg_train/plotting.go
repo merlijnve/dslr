@@ -20,8 +20,12 @@ func featuresToScatter(s chart.ScatterChart, c Classifier) chart.ScatterChart {
 			f1 = append(f1, chart.EPoint{Y: c.data[i][1], X: c.data[i][0]})
 		}
 	}
-	s.AddData(c.House, f0, chart.PlotStylePoints, chart.Style{LineColor: color.NRGBA{0x00, 0xff, 0x00, 0xff}})
-	s.AddData("others", f1, chart.PlotStylePoints, chart.Style{LineColor: color.NRGBA{0xff, 0x00, 0x00, 0xff}})
+	if len(f0) > 0 {
+		s.AddData(c.House, f0, chart.PlotStylePoints, chart.Style{LineColor: color.NRGBA{0x00, 0xff, 0x00, 0xff}})
+	}
+	if len(f1) > 0 {
+		s.AddData("others", f1, chart.PlotStylePoints, chart.Style{LineColor: color.NRGBA{0xff, 0x00, 0x00, 0xff}})
+	}
 	return s
 }
 
