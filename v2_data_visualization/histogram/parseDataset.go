@@ -11,6 +11,7 @@ func identifyNumericalFeatures(dataset [][]string) []int {
 	numericalFeatures := make([]int, 0)
 
 	for i := 0; i < len(dataset[0]); i++ {
+		emptyFeatures := 0
 		numerical := true
 		for _, row := range dataset[1:] {
 			if row[i] != "" {
@@ -18,9 +19,11 @@ func identifyNumericalFeatures(dataset [][]string) []int {
 				if err != nil {
 					numerical = false
 				}
+			} else {
+				emptyFeatures++
 			}
 		}
-		if numerical {
+		if numerical && emptyFeatures < len(dataset)-1 {
 			numericalFeatures = append(numericalFeatures, i)
 		}
 	}
@@ -42,6 +45,6 @@ func readDataset() [][]string {
 
 	csv := csv.NewReader(file)
 	records, err := csv.ReadAll()
-	handleError(err, "Error: could not parse csv")
+	handleError(err, "Error: invalid csv")
 	return records
 }
