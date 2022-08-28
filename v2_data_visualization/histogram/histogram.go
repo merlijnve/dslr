@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"os"
 )
@@ -14,8 +15,11 @@ func handleError(err error, msg string) {
 
 func main() {
 	dataset := readDataset()
-	numericalFeatures := identifyNumericalFeatures(dataset)
+	if len(dataset) <= 1 {
+		handleError(errors.New("empty dataset"), "Error: dataset is empty")
+	}
 
+	numericalFeatures := identifyNumericalFeatures(dataset)
 	err := os.MkdirAll("tmp", 0755)
 	handleError(err, "Error: could not create folder tmp")
 	for _, i := range numericalFeatures {
