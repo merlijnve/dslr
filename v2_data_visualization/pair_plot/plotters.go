@@ -37,10 +37,18 @@ func featuresToScatter(s chart.ScatterChart, dataset [][]string, i1 int, i2 int)
 			}
 		}
 	}
-	s.AddData("Hufflepuff", huf, chart.PlotStylePoints, chart.Style{})
-	s.AddData("Gryffindor", gry, chart.PlotStylePoints, chart.Style{})
-	s.AddData("Slytherin", sly, chart.PlotStylePoints, chart.Style{})
-	s.AddData("Ravenclaw", rav, chart.PlotStylePoints, chart.Style{})
+	if (len(huf) > 0) {
+		s.AddData("Hufflepuff", huf, chart.PlotStylePoints, chart.Style{})
+	}
+	if (len(gry) > 0) {
+		s.AddData("Gryffindor", gry, chart.PlotStylePoints, chart.Style{})
+	}
+	if (len(sly) > 0) {
+		s.AddData("Slytherin", sly, chart.PlotStylePoints, chart.Style{})
+	}
+	if (len(rav) > 0) {
+		s.AddData("Ravenclaw", rav, chart.PlotStylePoints, chart.Style{})
+	}
 	return s
 }
 

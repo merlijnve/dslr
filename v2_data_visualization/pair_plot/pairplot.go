@@ -56,7 +56,7 @@ func main() {
 
 	err := os.MkdirAll("tmp", 0755)
 	handleError(err, "Error: could not create folder tmp")
-
+	
 	fmt.Println("Creating feature images...")
 	plotScatter(dataset, numericalFeatures)
 	for _, i := range numericalFeatures {
@@ -64,6 +64,6 @@ func main() {
 	}
 	fmt.Println("Creating pairplot...")
 	combineImages(dataset, numericalFeatures)
-	os.RemoveAll("tmp/")
 	fmt.Println("Done: created pairplot.jpeg")
+	os.RemoveAll("tmp/")
 }
